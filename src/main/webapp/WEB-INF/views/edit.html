@@ -10,8 +10,8 @@
     <a th:href="@{/song/list}">Back to song list</a>
 </p>
 <div id="form">
-    <form th:action="@{/song/edit}" th:object="${songForm}"
-          method="POST" novalidate="novalidate" enctype="multipart/form-data">
+    <form th:action="@{/song/edit/{id}(id=${songForm.id})}" th:object="${songForm}"
+          method="POST" enctype="multipart/form-data">
         <input type="hidden" th:field="*{id}"/>
         <table>
             <tr>
@@ -23,16 +23,16 @@
                 <td><input type="text" id="artist" th:field="*{artist}"/></td>
             </tr>
             <tr>
-                <td><label for="listMusic">ListMusic</label></td>
+                <td><label for="listMusic">List Music</label></td>
                 <td>
-                    <select id="listMusic" th:field="*{listMusic}">
+                    <select id="listMusic" th:field="*{listMusic.id}">
                         <option th:each="list : ${lists}" th:value="${list.id}" th:text="${list.title}"></option>
                     </select>
                 </td>
             </tr>
             <tr>
                 <td><label for="fileSong">File Song</label></td>
-                <td><input type="file" id="fileSong" th:field="*{fileSong}"/></td>
+                <td><input type="file" id="fileSong" name="fileSong"/></td>
             </tr>
             <tr>
                 <td></td>

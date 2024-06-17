@@ -21,18 +21,23 @@ public class SongService implements ISongService {
     }
 
 
-    public void update(int id, Song music) {
-        int index = songs.indexOf(findById(id));
-        songs.set(index, music);
+    public void update(int id, Song song) {
+        int index = findById(id).getId();
+        songs.set(index, song);
     }
 
 
     public void delete(int id) {
-        songs.remove(id);
+        songs.removeIf(customer -> customer.getId() == id);
     }
 
 
     public Song findById(int id) {
-        return songs.get(id);
+        for (int i = 0; i < songs.size(); i++) {
+            if (songs.get(i).getId() == id){
+                return songs.get(i);
+            }
+        }
+        return null;
     }
 }

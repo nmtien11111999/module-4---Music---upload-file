@@ -22,7 +22,7 @@ import org.thymeleaf.templatemode.TemplateMode;
 @ComponentScan(basePackages = "sing")
 @PropertySource("classpath:upload_file.properties")
 public class AppConfiguration implements WebMvcConfigurer, ApplicationContextAware {
-    @Value("{file-upload}")
+    @Value("${file-upload}")
     private String upload;
 
     private ApplicationContext applicationContext;

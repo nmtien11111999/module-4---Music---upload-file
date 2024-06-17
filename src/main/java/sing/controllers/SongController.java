@@ -13,7 +13,6 @@ import sing.models.Song;
 import sing.models.SongForm;
 import sing.services.ISongService;
 import sing.services.ListMusicService;
-import sing.services.SongService;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,59 +21,56 @@ import java.util.List;
 @Controller
 @RequestMapping("/song")
 public class SongController {
-    @Value("${file-upload}")
-    private String fileUpload;
-    @Autowired
-    private ISongService productService;
 
     @Autowired
-    private ListMusicService musicService;
+    private ISongService songService;
+
+    @Autowired
+    private ListMusicService listMusicService;
+
+    @Value("${file-upload}")
+    private String fileUpload;
 
     @GetMapping("/list")
     public String showAll(Model model) {
-        List<Song> songs = productService.findAll();
+        List<Song> songs = songService.findAll();
         model.addAttribute("songs", songs);
         return "list";
     }
 
     @GetMapping("/create")
-    public ModelAndView showCreateForm() {
-        ModelAndView modelAndView = new ModelAndView("create");
-        modelAndView.addObject("songForm", new SongForm());
-        modelAndView.addObject("lists", musicService.getListMusics());
-        return modelAndView;
+    public String showCreateForm(Model model) {
+        model.addAttribute("songForm", new SongForm());
+        model.addAttribute("lists", listMusicService.getListMusics());
+        return "create";
     }
 
     @PostMapping("/create")
-    public String saveProduct(@ModelAttribute SongForm songForm) {
-        // lấy ảnh ra
+    public String saveProduct(@ModelAttribute("songForm") SongForm songForm) {
         MultipartFile multipartFile = songForm.getFileSong();
-        // lấy tên file
         String fileName = multipartFile.getOriginalFilename();
         try {
-            // copy lại file ến nơi lưu trữ
             FileCopyUtils.copy(songForm.getFileSong().getBytes(), new File(fileUpload + fileName));
         } catch (IOException ex) {
             ex.printStackTrace();
         }
         Song song = new Song(songForm.getId(), songForm.getName(),
-                songForm.getArtist(),songForm.getListMusic() , fileName);
-        productService.addMusic(song);
+                songForm.getArtist(), songForm.getListMusic(), fileName);
+        songService.addMusic(song);
         return "redirect:/song/list";
     }
 
     @GetMapping("/edit/{id}")
-    public ModelAndView showEditForm(@PathVariable int id) {
-        Song song = productService.findById(id);
-        ModelAndView modelAndView = new ModelAndView("edit");
+    public String showEditForm(@PathVariable int id, Model model) {
+        Song song = songService.findById(id);
         SongForm songForm = new SongForm(song.getId(), song.getName(), song.getArtist(), song.getListMusic(), null);
-        modelAndView.addObject("songForm", songForm);
-        modelAndView.addObject("lists", musicService.getListMusics());
-        return modelAndView;
+        model.addAttribute("songForm", songForm);
+        model.addAttribute("lists", listMusicService.getListMusics());
+        return "edit";
     }
 
-    @PostMapping("/edit")
-    public String updateProduct(@ModelAttribute SongForm songForm) {
+    @PostMapping("/edit/{id}")
+    public String updateProduct(@ModelAttribute("songForm") SongForm songForm) {
         MultipartFile multipartFile = songForm.getFileSong();
         String fileName = multipartFile.getOriginalFilename();
         try {
@@ -83,13 +79,13 @@ public class SongController {
             ex.printStackTrace();
         }
         Song song = new Song(songForm.getId(), songForm.getName(), songForm.getArtist(), songForm.getListMusic(), fileName);
-        productService.update(songForm.getId(), song);
+        songService.update(songForm.getId(), song);
         return "redirect:/song/list";
     }
 
     @GetMapping("/delete/{id}")
     public String deleteProduct(@PathVariable int id) {
-        productService.delete(id);
+        songService.delete(id);
         return "redirect:/song/list";
     }
 }
