@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>List song</title>
@@ -14,26 +13,30 @@
 
 <table>
     <thead>
-        <tr>
-            <td>STT</td>
-            <td>Name</td>
-            <td>Artist</td>
-            <td>ListMusic</td>
-            <td>FileSong</td>
-            <td>Edit</td>
-            <td>Delete</td>
-        </tr>
+    <tr>
+        <td>STT</td>
+        <td>Name</td>
+        <td>Artist</td>
+        <td>ListMusic</td>
+        <td>FileSong</td>
+        <td>Edit</td>
+        <td>Delete</td>
+    </tr>
     </thead>
     <tbody>
-        <tr th:each="song , state : ${songs}">
-            <td th:text="${state.count}"></td>
-            <td th:text="${song.name}"></td>
-            <td th:text="${song.artist}"></td>
-            <td th:text="${song.listMusic}"></td>
-            <td><img width="100" height="100" th:src="@{'/image/' + ${song.fileSong}}" alt="" src=""></td>
-            <td></td>
-            <td></td>
-        </tr>
+    <tr th:each="song, state : ${songs}">
+        <td th:text="${state.count}"></td>
+        <td th:text="${song.name}"></td>
+        <td th:text="${song.artist}"></td>
+        <td th:text="${song.listMusic.title}"></td>
+        <td><img width="100" height="100" th:src="@{'/image/' + ${song.fileSong}}" alt=""/></td>
+        <td>
+            <a th:href="@{/song/edit/{id}(id=${song.id})}">Edit</a>
+        </td>
+        <td>
+            <a th:href="@{/song/delete/{id}(id=${song.id})}">Delete</a>
+        </td>
+    </tr>
     </tbody>
 </table>
 </body>
